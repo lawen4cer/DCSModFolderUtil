@@ -16,7 +16,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.Diagnostics;
-using Microsoft.Win32;
+using System.Security.AccessControl;
+using System.Text.RegularExpressions;
 
 namespace DCSModFolderUtil
 {
@@ -25,6 +26,10 @@ namespace DCSModFolderUtil
     /// </summary>
     public partial class MainWindow : Window
     {
+        private FileSecurity fileSecurity;
+
+        string fileNamePattern = @"(\\\w+)?(\.\w+)";
+
         public string InputDirectory { get; set; }
         public string OutputDirectory { get; set; }
 
@@ -50,12 +55,12 @@ namespace DCSModFolderUtil
 
         private void openPathToDirectoryFolderExplorer(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
 
-            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                InputDirectory = folderBrowserDialog.SelectedPath;
-                pathToDirectoryTextBox.Text = folderBrowserDialog.SelectedPath;
+                InputDirectory = openFileDialog.FileName;
+                pathToDirectoryTextBox.Text = InputDirectory;
             }
         }
 
@@ -75,6 +80,11 @@ namespace DCSModFolderUtil
 
             var output = System.IO.Path.Combine(System.IO.Path.GetFullPath(OutputDirectory), ModName.Text);
 
+            var initData = "";
+
+            //TODO: fix regex
+            var fileName = Regex.Match(InputDirectory, fileNamePattern).Value;
+
 
 
 
@@ -83,11 +93,26 @@ namespace DCSModFolderUtil
             var strFinalPath = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath);
 
 
-            var createdDirectory = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath);
+            var createdDirectory = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath).TrimEnd(fileName.ToCharArray());
+
+
+            System.IO.Directory.CreateDirectory(createdDirectory);
+
+
+
+            byte[] result = File.ReadAllBytes(InputDirectory);
+
+            using (var file = File.Create(strFinalPath, 2048, FileOptions.None))
+            {
+                fileSecurity = new FileSecurity(strFinalPath, AccessControlSections.All);
+
+                file.SetAccessControl(fileSecurity);
+                file.Write(result, 0, result.Length);
+            }
+
+
+
             System.Windows.MessageBox.Show($"Created Directory at {createdDirectory}", "created path", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-            System.IO.Directory.CreateDirectory(strFinalPath);
-
         }
     }
 }
