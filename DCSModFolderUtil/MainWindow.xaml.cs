@@ -26,18 +26,16 @@ namespace DCSModFolderUtil
     /// </summary>
     public partial class MainWindow : Window
     {
-        private FileSecurity fileSecurity;
-
-        string fileNamePattern = @"(\\\w+)?(\.\w+)";
-
         public string InputDirectory { get; set; }
         public string OutputDirectory { get; set; }
+
+        public string DcsRootPath => ConfigurationManager.AppSettings.Get("DCS_PATH");
 
         public MainWindow()
         {
 
             InitializeComponent();
-            dcsPathTextBox.Text = ConfigurationManager.AppSettings.Get("DCS_PATH");
+            dcsPathTextBox.Text = DcsRootPath;
 
 
         }
@@ -56,7 +54,7 @@ namespace DCSModFolderUtil
         private void openPathToDirectoryFolderExplorer(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
-
+            openFileDialog.InitialDirectory = DcsRootPath;
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 InputDirectory = openFileDialog.FileName;
@@ -80,10 +78,10 @@ namespace DCSModFolderUtil
 
             var output = System.IO.Path.Combine(System.IO.Path.GetFullPath(OutputDirectory), ModName.Text);
 
-            var initData = "";
+            var fileName = System.IO.Path.GetFileName(InputDirectory);
 
-            //TODO: fix regex
-            var fileName = Regex.Match(InputDirectory, fileNamePattern).Value;
+          
+            
 
 
 
@@ -93,26 +91,32 @@ namespace DCSModFolderUtil
             var strFinalPath = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath);
 
 
-            var createdDirectory = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath).TrimEnd(fileName.ToCharArray());
+            var createdDirectory = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath).TrimEnd(fileName.ToCharArray()).TrimEnd(new char[] { '\\' });
 
-
-            System.IO.Directory.CreateDirectory(createdDirectory);
-
-
-
-            byte[] result = File.ReadAllBytes(InputDirectory);
-
-            using (var file = File.Create(strFinalPath, 2048, FileOptions.None))
+            try
             {
-                fileSecurity = new FileSecurity(strFinalPath, AccessControlSections.All);
+                if (!Directory.Exists(createdDirectory))
+                {
+                    Directory.CreateDirectory(createdDirectory);
+                }
 
-                file.SetAccessControl(fileSecurity);
-                file.Write(result, 0, result.Length);
+                File.Copy(InputDirectory, strFinalPath);
+                System.Windows.MessageBox.Show($"Created mod structure at {createdDirectory}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception)
+            {
+
+                System.Windows.MessageBox.Show($"An error occurred while trying to copy the file. Make sure the output path doesn't already exist", "File Copy Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+      
 
 
-            System.Windows.MessageBox.Show($"Created Directory at {createdDirectory}", "created path", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+           
+
+
+            
         }
     }
 }
