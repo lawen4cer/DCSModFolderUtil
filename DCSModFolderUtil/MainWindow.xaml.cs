@@ -12,9 +12,11 @@ namespace DCSModFolderUtil
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static string _DcsRootPathSettingsKey => "DCS_PATH";
+        public static string _DefaultOutputSettingsKey => "DefaultOutput";
         public string InputDirectory { get; set; }
-        public string OutputDirectory { get; set; } = ConfigurationManager.AppSettings.Get("DefaultOutput");
-        public string DcsRootPath { get; set; } = ConfigurationManager.AppSettings.Get("DCS_PATH");
+        public string OutputDirectory { get; set; } = ConfigurationUtil.GetSetting(_DefaultOutputSettingsKey);
+        public string DcsRootPath { get; set; } = ConfigurationUtil.GetSetting(_DcsRootPathSettingsKey);
 
 
 
@@ -36,7 +38,7 @@ namespace DCSModFolderUtil
             {
                 DcsRootPath = folderBrowserDialog.SelectedPath;
                 dcsPathTextBox.Text = DcsRootPath;
-                
+
             }
         }
 
@@ -84,6 +86,7 @@ namespace DCSModFolderUtil
 
             try
             {
+                ProgressBarMain.Visibility = Visibility.Visible;
                 if (!Directory.Exists(createdDirectory))
                 {
                     Directory.CreateDirectory(createdDirectory);
@@ -94,16 +97,17 @@ namespace DCSModFolderUtil
                 }
 
                 File.Copy(InputDirectory, strFinalPath);
+                ConfigurationUtil.AddUpdateAppSettings(_DcsRootPathSettingsKey, DcsRootPath);
+                ConfigurationUtil.AddUpdateAppSettings(_DefaultOutputSettingsKey, OutputDirectory);
+                ProgressBarMain.Visibility = Visibility.Hidden;
                 System.Windows.MessageBox.Show($"Created mod structure at {createdDirectory}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                ConfigurationManager.AppSettings.Set("DCS_PATH", DcsRootPath);
-                ConfigurationManager.AppSettings.Set("DefaultOutput", OutputDirectory);
             }
             catch (Exception)
             {
                 System.Windows.MessageBox.Show($"An error occurred while trying to copy the file. Make sure the output path doesn't already exist", "File Copy Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            
+
 
         }
     }

@@ -30,11 +30,12 @@
         <Label x:Name="pathToOutputLabel" Content="Path To Output" Margin="32,0,445,0" Height="29" VerticalAlignment="Center" Foreground="White" Grid.Row="3" RenderTransformOrigin="0.626,0.519" Grid.Column="1"/>
         <TextBox x:Name="pathToOutputTextBox" MaxWidth="327px" Height="32" Margin="155,0,133,0" Text="" ToolTip="This is the path to your output directory where the mod will be created" TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
         <Button x:Name="pathToOutputButton" Content="Select" Height="32" Margin="472,0,66,0" Click="openPathToOutputFolderExplorer" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
-        <Button x:Name="ExecuteButton" Content="Execute" Grid.Column="1" HorizontalAlignment="Left" Margin="212,0,0,0" Grid.Row="5" VerticalAlignment="Center" RenderTransformOrigin="-1.883,-1.857" Height="52" Width="198" Click="Execute"/>
+        <Button x:Name="ExecuteButton" Content="Execute" Grid.Column="1" HorizontalAlignment="Left" Margin="212,42,0,0" Grid.Row="5" VerticalAlignment="Top" RenderTransformOrigin="-1.883,-1.857" Height="52" Width="198" Click="Execute"/>
         <TextBox x:Name="ModName" Grid.Column="1" MaxWidth="327px" HorizontalAlignment="Left" Margin="155,25,0,0" Grid.Row="4" Text="" ToolTip="This is the name of the mod you are created to name the top-level folder. This is required!" TextWrapping="Wrap" VerticalAlignment="Top" Width="312" Height="29"/>
         <Label x:Name="ModNameLabel" Content="ModName" Margin="32,25,445,0" Height="29" VerticalAlignment="Top" Foreground="White" Grid.Row="4" RenderTransformOrigin="0.626,0.519" Grid.Column="1"/>
         <Label x:Name="TitleLabel" Content="DCS Mod Folder Util" Foreground="White" FontSize="32px" HorizontalContentAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="460" Margin="0,11,0,0"/>
         <Label x:Name="VersionLabel" Content="" Grid.Column="1" Foreground="White" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Margin="0,67,0,0" VerticalAlignment="Top" Width="252" Height="28"/>
+        <ProgressBar x:Name="ProgressBarMain" IsIndeterminate="True" Visibility="Hidden" HorizontalAlignment="Left" Height="24" Margin="212,112,0,0" Grid.Row="5" VerticalAlignment="Top" Width="198" Grid.Column="1"/>
 
     </Grid>
 </Window>
