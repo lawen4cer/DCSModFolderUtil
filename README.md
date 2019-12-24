@@ -1,5 +1,5 @@
 # DCSModFolderUtil
-Just a GUI utility I made to automate DCS mod folder creation. 
+Just a GUI utility I made to automate DCS mod folder structure creation. 
 
 Download the latest release under releases. 
 
