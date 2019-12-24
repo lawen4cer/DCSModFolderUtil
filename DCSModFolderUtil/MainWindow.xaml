@@ -5,30 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DCSModFolderUtil"
         mc:Ignorable="d"
-        Title="DCS Mod Folder Util" Height="450" Width="800"
-        Background="Black">
+        Title="DCS Mod Folder Util" Height="600" Width="1000"
+        Background="#373839">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <Label x:Name="dcsPathLabel" Content="DCS Path" Margin="99,10,100,0" Height="29" Width="68" d:LayoutOverrides="HorizontalAlignment, Height" VerticalAlignment="Top" Foreground="White"/>
-        <TextBox x:Name="dcsPathTextBox" Height="32" Margin="10,39,10,0" Text="" TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="HorizontalAlignment, Height" VerticalAlignment="Top"/>
-        <Button x:Name="dcsPathSelectButton" Content="Select" Height="29" Margin="109,87,110,0" Width="48" Click="openDcsPathFolderExplorer" VerticalAlignment="Top" d:LayoutOverrides="HorizontalAlignment, Height"/>
-        <Label x:Name="pathToFileLabel" Content="Path To File" Margin="48,10,48,0" Height="29" VerticalAlignment="Top" Grid.Column="1" Foreground="White"/>
-        <TextBox x:Name="pathToDirectoryTextBox" Height="32" Margin="10,39,10,0" Text="" TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Grid.Column="1"/>
-        <Button x:Name="dcspathToDirectoryButton" Content="Select" Height="29" Margin="109,87,109,0" Width="48" Click="openPathToDirectoryFolderExplorer" VerticalAlignment="Top" Grid.Column="1"/>
-        <Label x:Name="pathToOutputLabel" Content="Path To Output" Margin="48,10,48,0" Height="29" VerticalAlignment="Top" Grid.Column="2" Foreground="White"/>
-        <TextBox x:Name="pathToOutputTextBox" Height="32" Margin="10,39,10,0" Text="" TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Grid.Column="2"/>
-        <Button x:Name="pathToOutputButton" Content="Select" Height="29" Margin="110,87,109,0" Width="48" Click="openPathToOutputFolderExplorer" VerticalAlignment="Top" Grid.Column="2"/>
-        <Button x:Name="ExecuteButton" Content="Execute" Grid.Column="1" HorizontalAlignment="Center" Margin="0,67,0,0" Grid.Row="2" VerticalAlignment="Top" RenderTransformOrigin="-1.883,-1.857" Height="68" Width="198" Click="Execute"/>
-        <TextBox x:Name="ModName" Grid.Column="1" HorizontalAlignment="Center" Margin="0,33,0,0" Grid.Row="2" Text="Mod Name" TextWrapping="Wrap" VerticalAlignment="Top" Width="198" Height="29"/>
+        <Label x:Name="dcsPathLabel" Content="DCS Path" Margin="32,29,445,0" Height="29" VerticalAlignment="Top" Foreground="White" Grid.Row="1" Grid.Column="1"/>
+        <TextBox x:Name="dcsPathTextBox" MaxWidth="327px" Height="32" Margin="155,27,133,0" Text="" ToolTip="This is the path to your root DCS folder. EX. C:\Program Files\Eagle Dynamics\DCS World OpenBeta"  TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
+        <Button x:Name="dcsPathSelectButton" Content="Select" Height="32" Margin="472,27,66,0" Click="openDcsPathFolderExplorer" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="pathToFileLabel" Content="Path To File" Margin="32,0,445,0" Height="29" VerticalAlignment="Center" Foreground="White" Grid.Row="2" Grid.Column="1"/>
+        <TextBox x:Name="pathToDirectoryTextBox" MaxWidth="327px" Height="32" Margin="155,0,133,0" Text="" ToolTip="This is the path to the file that you want to mod. You must select a file." TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2"/>
+        <Button x:Name="dcspathToDirectoryButton" Content="Select" Height="32" Margin="472,22,66,0" Click="openPathToDirectoryFolderExplorer" VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"/>
+        <Label x:Name="pathToOutputLabel" Content="Path To Output" Margin="32,0,445,0" Height="29" VerticalAlignment="Center" Foreground="White" Grid.Row="3" RenderTransformOrigin="0.626,0.519" Grid.Column="1"/>
+        <TextBox x:Name="pathToOutputTextBox" MaxWidth="327px" Height="32" Margin="155,0,133,0" Text="" ToolTip="This is the path to your output directory where the mod will be created" TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
+        <Button x:Name="pathToOutputButton" Content="Select" Height="32" Margin="472,0,66,0" Click="openPathToOutputFolderExplorer" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
+        <Button x:Name="ExecuteButton" Content="Execute" Grid.Column="1" HorizontalAlignment="Left" Margin="212,0,0,0" Grid.Row="5" VerticalAlignment="Center" RenderTransformOrigin="-1.883,-1.857" Height="52" Width="198" Click="Execute"/>
+        <TextBox x:Name="ModName" Grid.Column="1" MaxWidth="327px" HorizontalAlignment="Left" Margin="155,25,0,0" Grid.Row="4" Text="" ToolTip="This is the name of the mod you are created to name the top-level folder. This is required!" TextWrapping="Wrap" VerticalAlignment="Top" Width="312" Height="29"/>
+        <Label x:Name="ModNameLabel" Content="ModName" Margin="32,25,445,0" Height="29" VerticalAlignment="Top" Foreground="White" Grid.Row="4" RenderTransformOrigin="0.626,0.519" Grid.Column="1"/>
+        <Label x:Name="TitleLabel" Content="DCS Mod Folder Util" Foreground="White" FontSize="32px" HorizontalContentAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="460" Margin="0,11,0,0"/>
+        <Label x:Name="VersionLabel" Content="" Grid.Column="1" Foreground="White" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Margin="0,67,0,0" VerticalAlignment="Top" Width="252" Height="28"/>
 
     </Grid>
 </Window>
