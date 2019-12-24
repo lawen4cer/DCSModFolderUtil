@@ -1,22 +1,9 @@
 ﻿using System;
 using System.Configuration;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO;
-using System.Diagnostics;
-using Microsoft.Win32;
+using System.Reflection;
 
 namespace DCSModFolderUtil
 {
@@ -25,14 +12,21 @@ namespace DCSModFolderUtil
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static string _DcsRootPathSettingsKey => "DCS_PATH";
+        public static string _DefaultOutputSettingsKey => "DefaultOutput";
         public string InputDirectory { get; set; }
-        public string OutputDirectory { get; set; }
+        public string OutputDirectory { get; set; } = ConfigurationUtil.GetSetting(_DefaultOutputSettingsKey);
+        public string DcsRootPath { get; set; } = ConfigurationUtil.GetSetting(_DcsRootPathSettingsKey);
+
+
 
         public MainWindow()
         {
 
             InitializeComponent();
-            dcsPathTextBox.Text = ConfigurationManager.AppSettings.Get("DCS_PATH");
+            dcsPathTextBox.Text = DcsRootPath;
+            pathToOutputTextBox.Text = OutputDirectory;
+            VersionLabel.Content = $"Version: {Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}";
 
 
         }
@@ -42,20 +36,20 @@ namespace DCSModFolderUtil
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                dcsPathTextBox.Text = folderBrowserDialog.SelectedPath;
-                ConfigurationManager.AppSettings.Set("DCS_PATH", folderBrowserDialog.SelectedPath);
+                DcsRootPath = folderBrowserDialog.SelectedPath;
+                dcsPathTextBox.Text = DcsRootPath;
 
             }
         }
 
         private void openPathToDirectoryFolderExplorer(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-
-            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog.InitialDirectory = DcsRootPath;
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                InputDirectory = folderBrowserDialog.SelectedPath;
-                pathToDirectoryTextBox.Text = folderBrowserDialog.SelectedPath;
+                InputDirectory = openFileDialog.FileName;
+                pathToDirectoryTextBox.Text = InputDirectory;
             }
         }
 
@@ -71,9 +65,14 @@ namespace DCSModFolderUtil
 
         private void Execute(object sender, RoutedEventArgs e)
         {
-            var modPath = InputDirectory.Replace(ConfigurationManager.AppSettings.Get("DCS_PATH"), String.Empty);
+            var modPath = InputDirectory.Replace(DcsRootPath, String.Empty);
 
             var output = System.IO.Path.Combine(System.IO.Path.GetFullPath(OutputDirectory), ModName.Text);
+
+            var fileName = System.IO.Path.GetFileName(InputDirectory);
+
+
+
 
 
 
@@ -83,10 +82,32 @@ namespace DCSModFolderUtil
             var strFinalPath = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath);
 
 
-            var createdDirectory = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath);
-            System.Windows.MessageBox.Show($"Created Directory at {createdDirectory}", "created path", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            var createdDirectory = System.IO.Path.Combine(normalizedFirstPath, normalizedSecondPath).TrimEnd(fileName.ToCharArray()).TrimEnd(new char[] { '\\' });
 
-            System.IO.Directory.CreateDirectory(strFinalPath);
+            try
+            {
+                ProgressBarMain.Visibility = Visibility.Visible;
+                if (!Directory.Exists(createdDirectory))
+                {
+                    Directory.CreateDirectory(createdDirectory);
+                }
+                if (File.Exists(strFinalPath))
+                {
+                    File.Delete(strFinalPath);
+                }
+
+                File.Copy(InputDirectory, strFinalPath);
+                ConfigurationUtil.AddUpdateAppSettings(_DcsRootPathSettingsKey, DcsRootPath);
+                ConfigurationUtil.AddUpdateAppSettings(_DefaultOutputSettingsKey, OutputDirectory);
+                ProgressBarMain.Visibility = Visibility.Hidden;
+                System.Windows.MessageBox.Show($"Created mod structure at {createdDirectory}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception)
+            {
+                System.Windows.MessageBox.Show($"An error occurred while trying to copy the file. Make sure the output path doesn't already exist", "File Copy Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+
 
         }
     }
